@@ -161,7 +161,9 @@ static void pm8xxx_vib_enable(struct timed_output_dev *dev, int value)
 					 timed_dev);
 	unsigned long flags;
 
-/*	spin_lock_irqsave(&vib->lock, flags);	*/
+	if ((value == 20) || (value == 21)) {
+		value = 40;
+	}
 
 retry:
 	spin_lock_irqsave(&vib->lock, flags);
@@ -181,8 +183,8 @@ retry:
 				 vib->pdata->max_timeout_ms : value);
 		vib->state = 1;
 		hrtimer_start(&vib->vib_timer,
-			      ktime_set(value / 1000, (value % 1000) * 1000000),
-			      HRTIMER_MODE_REL);
+				  ktime_set(value / 1000, (value % 1000) * 1000000),
+				  HRTIMER_MODE_REL);
 	}
 	spin_unlock_irqrestore(&vib->lock, flags);
 	schedule_work(&vib->work);
